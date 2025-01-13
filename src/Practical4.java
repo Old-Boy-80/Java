@@ -1,9 +1,9 @@
 public class Practical4 {
 	public static void main(String[] args) {
-		// try Methods here		
+		// try Methods here
 	}
 	
-	public static int getByte(int num) {
+	static int getByte(int num) {
 		int rem = num % 256;
 		if(rem > 0) {
 			if(rem > 127) {
@@ -18,7 +18,7 @@ public class Practical4 {
 		return rem;
 	}
 
-	public static int getShort(int num) {
+	static int getShort(int num) {
 		int remainder = num % 65536;
 		if(remainder > 0) {
 			if(remainder > 32767) {
@@ -32,7 +32,7 @@ public class Practical4 {
 		return remainder;
 	}
 	
-	public static int getNumber(int num, String type) {
+	static int getNumber(int num, String type) {
 		switch(type.trim().toLowerCase()) {
 			case "byte":
 				return getByte(num);
@@ -43,45 +43,67 @@ public class Practical4 {
 		}
 	}
 
-	public static String toXXString(String num, String XX) {
+	static String toXXString(String num, String XX) {
              num = num.toLowerCase();
-             int givenRadix;
+             int base;
              if(num.startsWith("0b") || num.startsWith("0B")) {
-                 givenRadix = 2;
+                 base = 2;
              }else if(num.matches("^0[xX]?[0-9a-fA-F]+$")) {
-                 givenRadix = 16;
+                 base = 16;
              }else if(num.startsWith("0o") || num.startsWith("0")) {
-                 givenRadix = 8;
+                 base = 8;
              } else {
-                 givenRadix = 10;
+                 base = 10;
              }
              if(num.startsWith("0x") || num.startsWith("0b") || num.startsWith("0o") ) {
                  num = num.substring(2);
              }
 
-             Integer i = Integer.parseInt(num, givenRadix);
+             int decimal = converttoDecimal(num, base);
         
              switch(XX.toLowerCase()) {
-                case "b": return getBinary(i);
-                case "o": return getOctal(i);
-                case "h": return getHexadecimal(i);
-                default : return getDecimal(i); }
+                case "b": return convertDecimaltoXX(decimal, 2);
+                case "o": return convertDecimaltoXX(decimal, 8);
+                case "h": return convertDecimaltoXX(decimal, 16);
+                default : return convertDecimaltoXX(decimal, 10); }
         }
 
-        public static String getBinary(Integer i) {
-                return Integer.toBinaryString(i);
-        }
-            
-        public static String getHexadecimal(Integer i) {
-                 return Integer.toHexString(i);
-        }
-        
-        public static String getOctal(Integer i) {
-                return Integer.toOctalString(i);
-       	}
+	static String convertDecimaltoXX(int num, int base) {
+		String xx = "";
+		while(num > 0) {
+			int remainder = num % base;
+			String s = ""; 
+			if(remainder >= 10) {
+				int val = 97 + remainder - 10;
+				s = Character.toString(val);
+			} else {
+				s = String.valueOf(remainder);
+			}
+			xx = s + xx;
 
-        public static String getDecimal(Integer i) {
-                return i.toString();
-        }
+			num /= base;
+		}
+		return xx;
+	}
 
-}
+
+	static int converttoDecimal(String num, int base) {
+		int decimal = 0;
+		for(int i = 0; i < num.length(); i++) {
+			char character = num.charAt(i);
+			int value = 0 ;
+			if(character >= '0' && character  <= '9') {
+				value = character - '0';
+			} else if(character >= 'A' && character <= 'F') {
+				value = character - 'A' + 10;
+			} else if(character >= 'a' && character <= 'f') {
+				value = character - 'a' + 10;
+			} 
+			decimal = decimal*base + value;
+		}
+		return decimal;
+		
+	}
+
+
+}                     
